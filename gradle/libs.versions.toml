@@ -9,8 +9,7 @@ lifecycle = "2.7.0"
 activityCompose = "1.9.0"
 composeBom = "2024.05.00"
 coroutines = "1.7.3"
-appcompat = "1.6.1"
-material = "1.12.0"
+vanniktech-publish = "0.28.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,4 +36,5 @@ coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-publish" }
 
