@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.github.lucascordeiro.ymir.core.utils.LifecycleUtils.ObserveActions
 import io.github.lucascordeiro.ymir.ui.theme.YmirTheme
 
 class MainActivity : ComponentActivity() {
@@ -41,9 +42,10 @@ class MainActivity : ComponentActivity() {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             val state by viewModel.state.collectAsStateWithLifecycle()
 
-            LaunchedEffect(Unit) {
-                viewModel.action.collect(::handleAction)
-            }
+            ObserveActions(
+                viewModel = viewModel,
+                handleAction = ::handleAction
+            )
 
             Greeting(
                 name = "Android",
