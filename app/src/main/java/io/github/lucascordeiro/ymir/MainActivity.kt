@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,19 +40,22 @@ class MainActivity : ComponentActivity() {
     private fun MainScreen(
         viewModel: MainViewModel = viewModel()
     ) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            val state by viewModel.state.collectAsStateWithLifecycle()
+        val state by viewModel.state.collectAsStateWithLifecycle()
 
-            ObserveActions(
-                viewModel = viewModel,
-                handleAction = ::handleAction
-            )
+        ObserveActions(
+            viewModel = viewModel,
+            handleAction = ::handleAction
+        )
 
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             Greeting(
                 name = "Android",
                 isLoading = state.isLoading,
-                onClickButton = viewModel::clickedLoadButton,
-                modifier = Modifier.padding(innerPadding)
+                onClickButton = viewModel::clickedLoadButton
             )
         }
     }
@@ -78,18 +82,6 @@ class MainActivity : ComponentActivity() {
             Button(onClick = onClickButton) {
                 Text(text = "Click me!")
             }
-        }
-    }
-
-    @Preview(showBackground = true)
-    @Composable
-    fun GreetingPreview() {
-        YmirTheme {
-            Greeting(
-                name = "Android",
-                isLoading = false,
-                onClickButton = {}
-            )
         }
     }
 }

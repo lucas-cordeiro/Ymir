@@ -34,3 +34,44 @@ class ViewModelObserver<S: UiState, A: UiAction, V: ViewModel<S, A>>(
         collectJobAction.cancel()
     }
 }
+
+@ExperimentalCoroutinesApi
+class ViewModelStateObserver<S: UiState, V: io.github.lucascordeiro.ymir.core.state.ViewModel<S>>(
+    private val viewModel: V,
+    private val testDispatcher: CoroutineDispatcher
+) {
+    val state = mutableListOf<S>()
+
+    private lateinit var collectJobState: Job
+
+    fun start() {
+        CoroutineScope(testDispatcher).run {
+            collectJobState = launch(UnconfinedTestDispatcher()) { viewModel.state.toList(state) }
+        }
+    }
+
+    fun stop(){
+        collectJobState.cancel()
+    }
+}
+
+@ExperimentalCoroutinesApi
+class ViewModelActionObserver< A: UiAction, V: io.github.lucascordeiro.ymir.core.action.ViewModel<A>>(
+    private val viewModel: V,
+    private val testDispatcher: CoroutineDispatcher
+) {
+    val action = mutableListOf<A>()
+
+    private lateinit var collectJobAction: Job
+
+    fun start() {
+        CoroutineScope(testDispatcher).run {
+            collectJobAction = launch(UnconfinedTestDispatcher()) { viewModel.action.toList(action) }
+        }
+    }
+
+    fun stop(){
+        collectJobAction.cancel()
+    }
+}
+
