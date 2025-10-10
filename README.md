@@ -163,3 +163,4 @@ Additionally, the `app` module includes a unit test example for the ViewModel, d
 As the sole developer of this library, I am open to suggestions, improvements, and feedback to make it even better! If you have any ideas, encounter a bug, or would like to share your thoughts, feel free to open an issue.
 
 Your contributions and feedback are highly appreciated as they help enhance the quality and functionality of this library.
+
