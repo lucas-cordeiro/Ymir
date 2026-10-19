@@ -1,19 +1,21 @@
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.lucas-cordeiro.ymir/core.svg)](https://search.maven.org/artifact/io.github.lucas-cordeiro.ymir/core)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.9.23-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.lucas-cordeiro.ymir/core.svg)](https://central.sonatype.com/artifact/io.github.lucas-cordeiro.ymir/core)
+[![Kotlin](https://img.shields.io/badge/kotlin-2.4.20-blue.svg?logo=kotlin)](http://kotlinlang.org)
 ![badge-android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat)
+![badge-ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat)
 [![GitHub License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
-# Ymir: Custom ViewModel Library for Android
+# Ymir: Custom ViewModel Library for Kotlin Multiplatform
 
-Welcome to **Ymir**! This library provides a flexible and efficient way to manage UI state and actions in your Android applications using a custom implementation of ViewModel. The library is designed to simplify the handling of UI state changes and actions while leveraging the power of Kotlin's coroutines and Flow APIs.
+Welcome to **Ymir**! This library provides a flexible and efficient way to manage UI state and actions in your Android and iOS applications using a custom implementation of ViewModel. The library is designed to simplify the handling of UI state changes and actions while leveraging the power of Kotlin's coroutines and Flow APIs.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Getting Started](#getting-started)
+- [Migrating from 1.x](#migrating-from-1x)
 - [Usage](#usage)
   - [Implementing a ViewModel](#implementing-a-viewmodel)
-  - [Using with Jetpack Compose](#using-with-jetpack-compose)
+  - [Using with Compose](#using-with-compose)
 - [Testing](#testing)
 - [Demo](#demo)
 - [Contributions and Feedback](#contributions-and-feedback)
@@ -21,19 +23,45 @@ Welcome to **Ymir**! This library provides a flexible and efficient way to manag
 ## Features
 
 - **State Management**: Easily manage UI state and actions.
-- **Jetpack Compose Integration**: Seamlessly integrate with Jetpack Compose.
+- **Kotlin Multiplatform**: Share your ViewModels between Android and iOS (`iosArm64` and `iosSimulatorArm64`).
+- **Compose Integration**: Seamlessly integrate with Jetpack Compose and Compose Multiplatform.
 - **Coroutine Support**: Built-in support for Kotlin coroutines for asynchronous operations.
 
 ## Getting Started
 
-To get started with this library, add the following dependency to your `build.gradle`:
+In a Kotlin Multiplatform module, add the dependency to `commonMain`:
 
-```groovy
-dependencies {
-    implementation 'io.github.lucas-cordeiro.ymir:core:[last-version]'
+```kotlin
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("io.github.lucas-cordeiro.ymir:core:[last-version]")
+        }
+    }
 }
 ```
+
+In an Android-only module, add it to `dependencies`:
+
+```kotlin
+dependencies {
+    implementation("io.github.lucas-cordeiro.ymir:core:[last-version]")
+}
+```
+
 Replace [last-version] with the latest version available on [Maven Central](https://central.sonatype.com/artifact/io.github.lucas-cordeiro.ymir/core).
+
+Requirements:
+
+- Kotlin 2.4.20 or newer.
+- Android `minSdk` 23.
+- The library is built with the JetBrains lifecycle 2.10.0 and Compose Multiplatform 1.11.1.
+
+## Migrating from 1.x
+
+- The package did not change, so your imports keep working.
+- Android `minSdk` went from 21 to 23.
+- `ObserveActions` reads `LocalLifecycleOwner` from `androidx.lifecycle.compose`. Activities and fragments with Compose already provide it.
 
 ## Usage
 ### Implementing a ViewModel
@@ -53,7 +81,7 @@ sealed class HomeUiAction : UiAction {
 }
 ```
 
-Create your ViewModel by extending the custom ViewModel class provided by the library:
+Create your ViewModel by extending the custom ViewModel class provided by the library. It works in `commonMain`:
 
 ```kotlin
 
@@ -74,15 +102,15 @@ viewModelScope.launch {
 To send an `UiAction` need to call `sendAction`:
 ```kotlin
 viewModelScope.launch {
-    sendAction { MainUiAction.ShowToast("Hello, Android!") }
+    sendAction { HomeUiAction.ShowToast("Hello, Android!") }
 }
 ```
 
 **Note**: Both `setState` and `sendAction` are `suspend` functions.
 
-### Using with Jetpack Compose
+### Using with Compose
 
-In your Jetpack Compose UI, you can easily observe state and handle actions using the provided utility functions. Here's how:
+In your Compose UI, on Android or in Compose Multiplatform, you can easily observe state and handle actions using the provided utility functions. Here's how:
 
 ```kotlin
 
@@ -108,13 +136,13 @@ fun handleAction(action: HomeUiAction) {
 ```
 
 ## Testing
-This library includes support for testing ViewModel implementations by providing a utility class, `ViewModelObserver`, that simplifies the management of `UiState` and `UiAction` during tests.
+This library includes support for testing ViewModel implementations by providing a utility class, `ViewModelObserver`, that simplifies the management of `UiState` and `UiAction` during tests. The `test` artifact is available for Android.
 
-To use the testing utilities provided by the library, add the following dependency to the `testImplementation` section of your `build.gradle`:
+To use the testing utilities provided by the library, add the following dependency to the `testImplementation` section of your `build.gradle.kts`:
 
-```groovy
+```kotlin
 dependencies {
-    testImplementation 'io.github.lucas-cordeiro.ymir:test:[last-version]'
+    testImplementation("io.github.lucas-cordeiro.ymir:test:[last-version]")
 }
 ```
 Here's an example of how to write tests using the `ViewModelObserver`:
@@ -153,9 +181,11 @@ fun someTest() = runTest {
 }
 ```
 
+In common tests, you can collect `state` and `action` with [Turbine](https://github.com/cashapp/turbine), as the tests in `core/src/commonTest` do.
+
 ## Demo
 
-For a demonstration of how to implement and use this library, check out the `HomeActivity` in the `app` module of this repository.
+For a demonstration of how to implement and use this library, check out the `MainActivity` in the `app` module of this repository.
 Additionally, the `app` module includes a unit test example for the ViewModel, demonstrating how to test `UiState` and `UiAction` using the `ViewModelObserver`.
 
 ## Contributions and Feedback

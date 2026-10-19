@@ -32,8 +32,7 @@ local.properties
 
 .idea/vcs.xml
 
-gradlew
-
 .idea/material_theme_project_new.xml
 
 .idea/other.xml
+.kotlin
